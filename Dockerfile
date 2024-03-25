@@ -19,6 +19,7 @@ RUN apt-get update && \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
+# grant execute permission to entrypoint.sh
 RUN chmod +x entrypoint.sh
 
 CMD ["./entrypoint.sh"]
