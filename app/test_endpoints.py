@@ -45,3 +45,25 @@ def test_echo_upload():
 
     # time.sleep(5)
     shutil.rmtree(UPLOAD_DIR)
+
+
+def test_prediction_upload():
+    img_saved_path = BASE_DIR / "images"
+
+    for path in img_saved_path.glob("*"):
+        try:
+            img = Image.open(path)
+        except Exception:
+            img = None
+
+        response = client.post("/", files={"file": open(path, "rb")})
+
+        if img is None:
+            # Invalid image
+            assert response.status_code == 400
+        else:
+            # Valid image
+            assert response.status_code == 200
+
+            data = response.json()
+            assert len(data.keys()) == 1

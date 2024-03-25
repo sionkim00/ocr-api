@@ -3,6 +3,7 @@ import pathlib
 import uuid
 from functools import lru_cache
 
+import pytesseract
 from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -45,8 +46,19 @@ def home_view(request: Request, settings: Settings = Depends(get_settings)):
 
 
 @app.post("/")
-def home_detail_view():
-    return {"text": "Hello World"}
+async def prediction_view(
+    file: UploadFile = File(...), settings: Settings = Depends(get_settings)
+):
+    bytes_str = io.BytesIO(await file.read())
+    try:
+        img = Image.open(bytes_str)
+    except Exception as e:
+        raise HTTPException(detail="Invalid image", status_code=400) from e
+
+    ocr_prediction = pytesseract.image_to_string(img)
+    ocr_predictions = [x for x in ocr_prediction.split("\n")]
+
+    return {"result": ocr_predictions}
 
 
 @app.post("/img-echo/", response_class=FileResponse)
