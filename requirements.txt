@@ -10,3 +10,4 @@ python-dotenv
 aiofiles
 pydantic-settings
 python-multipart
+pillow
