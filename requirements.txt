@@ -8,3 +8,4 @@ httpx
 pre-commit
 python-dotenv
 pydantic-settings
+python-multipart
